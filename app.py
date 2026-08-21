@@ -135,13 +135,38 @@ def ask():
     try:
         data = request.get_json()
         question = data.get("question", "").strip()
+
         if not question:
-            return jsonify({"answer":"Please enter a question."})
+            return jsonify({"answer": "Please enter a question."})
+
         result = agent.invoke({
-    "messages": [
-        {"role": "user", "content": question}
-    ]
-})
+            "messages": [
+                {"role": "user", "content": question}
+            ]
+        })
+
+        messages = result.get("messages", [])
+
+        if not messages:
+            return jsonify({"answer": "Agent returned no response."}), 500
+
+        answer = messages[-1].content
+
+        if isinstance(answer, list):
+            final_answer = "\n".join(
+                item.get("text", str(item))
+                if isinstance(item, dict)
+                else str(item)
+                for item in answer
+            )
+        else:
+            final_answer = str(answer)
+
+        return jsonify({"answer": final_answer})
+
+    except Exception as e:
+        print("ERROR:", str(e))
+        return jsonify({"answer": "Error: " + str(e)}), 500
 
 messages = result.get("messages", [])
 
