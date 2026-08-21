@@ -591,26 +591,52 @@ async function askQuestion() {
             })
         });
 
-        const data = await response.json();
+        // Read response as TEXT first
+        const rawText = await response.text();
 
-        if (!response.ok) {
+        console.log("HTTP STATUS:", response.status);
+        console.log("SERVER RESPONSE:", rawText);
+
+        // Try to convert response to JSON
+        let data;
+
+        try {
+            data = JSON.parse(rawText);
+        } catch (jsonError) {
+
             answerBox.innerText =
-                data.answer || "Something went wrong.";
+                "Server returned an invalid response.\n\n" +
+                "HTTP Status: " + response.status +
+                "\n\n" +
+                rawText.substring(0, 500);
+
             return;
         }
 
+        // Backend returned an error
+        if (!response.ok) {
+
+            answerBox.innerText =
+                data.answer ||
+                data.error ||
+                "Agent returned an error.";
+
+            return;
+        }
+
+        // Successful response
         answerBox.innerText =
-            data.answer || "No recommendation received.";
+            data.answer ||
+            "No recommendation received.";
 
     } catch (error) {
 
-        answerBox.innerText =
-            "Unable to connect to the AI agent. Please try again.";
+        console.error("FETCH ERROR:", error);
 
-        console.error(error);
+        answerBox.innerText =
+            "Connection error: " + error.message;
     }
 }
-
 </script>
 
 </body>
