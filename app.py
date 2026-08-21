@@ -95,319 +95,106 @@ def home():
     <title>AI Bike Recommendation Agent</title>
 
     <style>
-        * {
-            box-sizing: border-box;
+        body {
+            font-family: Arial, sans-serif;
+            background: #ffffff;
+            color: #111111;
             margin: 0;
             padding: 0;
-        }
-
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background:
-                radial-gradient(circle at top left, #252044 0%, transparent 35%),
-                radial-gradient(circle at bottom right, #172f3d 0%, transparent 35%),
-                #090b12;
-            color: #ffffff;
-            min-height: 100vh;
         }
 
         .container {
             width: 90%;
             max-width: 1100px;
-            margin: auto;
-            padding: 45px 0;
+            margin: 50px auto;
         }
 
-        /* HEADER */
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 45px;
+        h1 {
+            font-size: 42px;
+            margin-bottom: 10px;
         }
 
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 14px;
+        .subtitle {
+            font-size: 20px;
+            color: #444444;
+            margin-bottom: 30px;
         }
 
-        .logo {
-            width: 55px;
-            height: 55px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, #ff4d6d, #7c3aed);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            box-shadow: 0 10px 35px rgba(124, 58, 237, 0.35);
-        }
-
-        .brand h1 {
-            font-size: 30px;
-            letter-spacing: -1px;
-        }
-
-        .brand p {
-            color: #9ca3af;
-            margin-top: 5px;
-            font-size: 14px;
-        }
-
-        .status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.1);
-            padding: 10px 15px;
-            border-radius: 30px;
-            color: #d1d5db;
-            font-size: 13px;
-        }
-
-        .status-dot {
-            width: 9px;
-            height: 9px;
-            background: #22c55e;
-            border-radius: 50%;
-            box-shadow: 0 0 12px #22c55e;
-        }
-
-        /* HERO */
-
-        .hero {
-            text-align: center;
-            margin-bottom: 35px;
-        }
-
-        .hero h2 {
-            font-size: 48px;
-            line-height: 1.1;
-            max-width: 800px;
-            margin: auto;
-            background: linear-gradient(90deg, #ffffff, #a78bfa, #fb7185);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            color: #9ca3af;
-            margin-top: 18px;
-            font-size: 17px;
-        }
-
-        /* SEARCH */
-
-        .search-card {
-            background: rgba(255,255,255,0.06);
-            border: 1px solid rgba(255,255,255,0.12);
-            border-radius: 22px;
-            padding: 10px;
-            backdrop-filter: blur(20px);
-            box-shadow: 0 25px 70px rgba(0,0,0,0.35);
-        }
-
-        .search-box {
+        .search-area {
             display: flex;
             gap: 10px;
+            width: 100%;
         }
 
         #question {
             flex: 1;
-            border: none;
+            padding: 18px;
+            font-size: 18px;
+            border: 1px solid #999999;
+            border-radius: 4px;
             outline: none;
-            background: #11141d;
-            color: white;
-            border-radius: 15px;
-            padding: 20px;
-            font-size: 16px;
         }
 
-        #question::placeholder {
-            color: #6b7280;
+        #question:focus {
+            border-color: #555555;
         }
 
-        .ask-btn {
-            border: none;
-            border-radius: 15px;
-            padding: 0 28px;
-            background: linear-gradient(135deg, #7c3aed, #ec4899);
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
+        #askButton {
+            padding: 0 25px;
+            font-size: 18px;
+            background: #eeeeee;
+            border: 1px solid #888888;
+            border-radius: 4px;
             cursor: pointer;
-            transition: 0.2s;
         }
 
-        .ask-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(236,72,153,0.3);
+        #askButton:hover {
+            background: #dddddd;
         }
 
-        /* QUICK QUESTIONS */
-
-        .quick {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 16px;
+        #askButton:disabled {
+            cursor: wait;
+            opacity: 0.6;
         }
 
-        .quick button {
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(255,255,255,0.05);
-            color: #d1d5db;
-            padding: 9px 14px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 13px;
-            transition: 0.2s;
-        }
-
-        .quick button:hover {
-            background: rgba(124,58,237,0.25);
-            border-color: #7c3aed;
-            color: white;
-        }
-
-        /* FEATURES */
-
-        .features {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin: 25px 0;
-        }
-
-        .feature {
-            background: rgba(255,255,255,0.045);
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 17px;
-            padding: 20px;
-        }
-
-        .feature-icon {
-            font-size: 25px;
-            margin-bottom: 12px;
-        }
-
-        .feature h3 {
-            font-size: 15px;
-            margin-bottom: 6px;
-        }
-
-        .feature p {
-            color: #8b93a3;
-            font-size: 13px;
-            line-height: 1.5;
-        }
-
-        /* ANSWER */
-
-        .answer-card {
-            background: rgba(255,255,255,0.055);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 22px;
-            padding: 25px;
-            margin-top: 25px;
-            min-height: 130px;
-        }
-
-        .answer-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 18px;
-        }
-
-        .ai-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #7c3aed, #ec4899);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .answer-header h3 {
-            font-size: 17px;
+        .answer-title {
+            font-size: 28px;
+            margin-top: 30px;
+            margin-bottom: 20px;
         }
 
         #answer {
-            color: #d1d5db;
-            line-height: 1.7;
+            font-size: 18px;
+            line-height: 1.6;
             white-space: pre-wrap;
-            font-size: 15px;
+            min-height: 100px;
         }
 
         .thinking {
-            color: #a78bfa;
-            animation: pulse 1.3s infinite;
+            color: #555555;
         }
-
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 0.4;
-            }
-            50% {
-                opacity: 1;
-            }
-        }
-
-        /* FOOTER */
-
-        footer {
-            text-align: center;
-            color: #596170;
-            font-size: 12px;
-            margin-top: 40px;
-        }
-
-        /* MOBILE */
 
         @media (max-width: 700px) {
 
             .container {
-                width: 94%;
-                padding: 25px 0;
+                width: 92%;
+                margin: 30px auto;
             }
 
-            .header {
-                align-items: flex-start;
+            h1 {
+                font-size: 32px;
             }
 
-            .status {
-                display: none;
+            .subtitle {
+                font-size: 17px;
             }
 
-            .brand h1 {
-                font-size: 21px;
-            }
-
-            .logo {
-                width: 45px;
-                height: 45px;
-                font-size: 23px;
-            }
-
-            .hero h2 {
-                font-size: 34px;
-            }
-
-            .search-box {
+            .search-area {
                 flex-direction: column;
             }
 
-            .ask-btn {
-                padding: 16px;
-            }
-
-            .features {
-                grid-template-columns: 1fr;
+            #askButton {
+                padding: 15px;
             }
         }
     </style>
@@ -417,162 +204,47 @@ def home():
 
 <div class="container">
 
-    <!-- HEADER -->
+    <h1>🏍️ AI Bike Recommendation Agent</h1>
 
-    <div class="header">
+    <div class="subtitle">
+        Ask about adventure, sports, touring, commuter and other bikes.
+    </div>
 
-        <div class="brand">
-            <div class="logo">🏍️</div>
+    <div class="search-area">
 
-            <div>
-                <h1>AI Bike Agent</h1>
-                <p>Your intelligent motorcycle recommendation assistant</p>
-            </div>
-        </div>
+        <input
+            id="question"
+            type="text"
+            placeholder="Suggest an adventure bike under 3 lakhs"
+        >
 
-        <div class="status">
-            <span class="status-dot"></span>
-            AI Agent Online
-        </div>
+        <button id="askButton" type="button">
+            Ask Agent
+        </button>
 
     </div>
 
+    <h2 class="answer-title">Answer:</h2>
 
-    <!-- HERO -->
-
-    <div class="hero">
-
-        <h2>Find the bike that fits your ride.</h2>
-
-        <p>
-            Tell me your budget, riding style or requirements.
-            I'll find the best match.
-        </p>
-
+    <div id="answer">
+        Ask me about a motorcycle to get started.
     </div>
-
-
-    <!-- SEARCH -->
-
-    <div class="search-card">
-
-        <div class="search-box">
-
-            <input
-                id="question"
-                type="text"
-                placeholder="Try: Suggest an adventure bike under 3 lakh"
-                onkeydown="if(event.key === 'Enter') askQuestion()"
-            >
-
-            <button id="askButton" class="ask-btn" type="button">
-                Ask AI ✨
-            </button>
-
-        </div>
-
-
-        <div class="quick">
-
-            <button onclick="setQuestion('Suggest an adventure bike under 3 lakh')">
-                🏔️ Adventure
-            </button>
-
-            <button onclick="setQuestion('Suggest a sports bike under 3 lakh')">
-                🏁 Sports
-            </button>
-
-            <button onclick="setQuestion('Suggest a bike for daily commuting')">
-                🏙️ Commuter
-            </button>
-
-            <button onclick="setQuestion('Suggest a bike for touring')">
-                🛣️ Touring
-            </button>
-
-            <button onclick="setQuestion('Compare Royal Enfield Himalayan 450 and Yezdi Adventure')">
-                ⚖️ Compare Bikes
-            </button>
-
-        </div>
-
-    </div>
-
-
-    <!-- FEATURES -->
-
-    <div class="features">
-
-        <div class="feature">
-            <div class="feature-icon">💰</div>
-            <h3>Budget Smart</h3>
-            <p>
-                Find motorcycles that match your specified budget.
-            </p>
-        </div>
-
-        <div class="feature">
-            <div class="feature-icon">🎯</div>
-            <h3>Personalized</h3>
-            <p>
-                Recommendations based on your riding purpose and category.
-            </p>
-        </div>
-
-        <div class="feature">
-            <div class="feature-icon">⚡</div>
-            <h3>AI Powered</h3>
-            <p>
-                LangChain agent intelligently selects the right bike tools.
-            </p>
-        </div>
-
-    </div>
-
-
-    <!-- ANSWER -->
-
-    <div class="answer-card">
-
-        <div class="answer-header">
-
-            <div class="ai-icon">
-                ✨
-            </div>
-
-            <h3>AI Recommendation</h3>
-
-        </div>
-
-        <div id="answer">
-            Ask me about a motorcycle to get started.
-        </div>
-
-    </div>
-
-
-    <footer>
-        AI Bike Recommendation Agent • Powered by LangChain & Gemini
-    </footer>
 
 </div>
 
 
 <script>
 
-
 document.addEventListener("DOMContentLoaded", function () {
 
-    const askButton = document.getElementById("askButton");
     const questionInput = document.getElementById("question");
+    const askButton = document.getElementById("askButton");
     const answerBox = document.getElementById("answer");
+
 
     async function askQuestion() {
 
         const question = questionInput.value.trim();
-
-        console.log("ASK BUTTON CLICKED");
-        console.log("QUESTION:", question);
 
         if (!question) {
             answerBox.innerText = "Please enter a question first.";
@@ -580,69 +252,61 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         answerBox.innerHTML =
-            '<span class="thinking">🧠 AI is analyzing your requirements...</span>';
+            '<span class="thinking">Agent is thinking...</span>';
 
         askButton.disabled = true;
         askButton.innerText = "Thinking...";
 
+
         try {
 
             const response = await fetch("/ask", {
+
                 method: "POST",
+
                 headers: {
                     "Content-Type": "application/json"
                 },
+
                 body: JSON.stringify({
                     question: question
                 })
+
             });
 
-            console.log("HTTP STATUS:", response.status);
 
-            const text = await response.text();
+            const data = await response.json();
 
-            console.log("SERVER RESPONSE:", text);
-
-            let data;
-
-            try {
-                data = JSON.parse(text);
-            } catch (e) {
-
-                answerBox.innerText =
-                    "Server returned an invalid response:\n\n" +
-                    text.substring(0, 500);
-
-                return;
-            }
 
             if (!response.ok) {
 
                 answerBox.innerText =
                     data.answer ||
-                    data.error ||
-                    "Agent returned an error.";
+                    "Something went wrong.";
 
                 return;
             }
 
+
             answerBox.innerText =
                 data.answer ||
-                "No recommendation received.";
+                "No answer received.";
+
 
         } catch (error) {
 
-            console.error("REQUEST ERROR:", error);
+            console.error(error);
 
             answerBox.innerText =
-                "Error: " + error.message;
+                "Unable to connect to the AI agent. Please try again.";
 
         } finally {
 
             askButton.disabled = false;
-            askButton.innerText = "Ask AI ✨";
+            askButton.innerText = "Ask Agent";
 
         }
+
     }
 
 
@@ -659,18 +323,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
-
-function setQuestion(text) {
-
-    const questionInput = document.getElementById("question");
-
-    questionInput.value = text;
-    questionInput.focus();
-
-}
-
 </script>
-
 
 </body>
 </html>
