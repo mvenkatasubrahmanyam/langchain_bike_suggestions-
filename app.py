@@ -465,7 +465,7 @@ def home():
                 onkeydown="if(event.key === 'Enter') askQuestion()"
             >
 
-            <button class="ask-btn" onclick="askQuestion()">
+            <button id="askButton" class="ask-btn" type="button">
                 Ask AI ✨
             </button>
 
@@ -560,84 +560,117 @@ def home():
 
 <script>
 
-function setQuestion(text) {
-    document.getElementById("question").value = text;
-    document.getElementById("question").focus();
-}
 
+document.addEventListener("DOMContentLoaded", function () {
 
-async function askQuestion() {
-
-    const question = document.getElementById("question").value.trim();
+    const askButton = document.getElementById("askButton");
+    const questionInput = document.getElementById("question");
     const answerBox = document.getElementById("answer");
 
-    if (!question) {
-        answerBox.innerText = "Please enter a question first.";
-        return;
-    }
+    async function askQuestion() {
 
-    answerBox.innerHTML =
-        '<span class="thinking">🧠 AI is analyzing your requirements...</span>';
+        const question = questionInput.value.trim();
 
-    try {
+        console.log("ASK BUTTON CLICKED");
+        console.log("QUESTION:", question);
 
-        const response = await fetch("/ask", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                question: question
-            })
-        });
-
-        // Read response as TEXT first
-        const rawText = await response.text();
-
-        console.log("HTTP STATUS:", response.status);
-        console.log("SERVER RESPONSE:", rawText);
-
-        // Try to convert response to JSON
-        let data;
-
-        try {
-            data = JSON.parse(rawText);
-        } catch (jsonError) {
-
-            answerBox.innerText =
-                "Server returned an invalid response.\n\n" +
-                "HTTP Status: " + response.status +
-                "\n\n" +
-                rawText.substring(0, 500);
-
+        if (!question) {
+            answerBox.innerText = "Please enter a question first.";
             return;
         }
 
-        // Backend returned an error
-        if (!response.ok) {
+        answerBox.innerHTML =
+            '<span class="thinking">🧠 AI is analyzing your requirements...</span>';
+
+        askButton.disabled = true;
+        askButton.innerText = "Thinking...";
+
+        try {
+
+            const response = await fetch("/ask", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    question: question
+                })
+            });
+
+            console.log("HTTP STATUS:", response.status);
+
+            const text = await response.text();
+
+            console.log("SERVER RESPONSE:", text);
+
+            let data;
+
+            try {
+                data = JSON.parse(text);
+            } catch (e) {
+
+                answerBox.innerText =
+                    "Server returned an invalid response:\n\n" +
+                    text.substring(0, 500);
+
+                return;
+            }
+
+            if (!response.ok) {
+
+                answerBox.innerText =
+                    data.answer ||
+                    data.error ||
+                    "Agent returned an error.";
+
+                return;
+            }
 
             answerBox.innerText =
                 data.answer ||
-                data.error ||
-                "Agent returned an error.";
+                "No recommendation received.";
 
-            return;
+        } catch (error) {
+
+            console.error("REQUEST ERROR:", error);
+
+            answerBox.innerText =
+                "Error: " + error.message;
+
+        } finally {
+
+            askButton.disabled = false;
+            askButton.innerText = "Ask AI ✨";
+
+        }
+    }
+
+
+    askButton.addEventListener("click", askQuestion);
+
+
+    questionInput.addEventListener("keydown", function (event) {
+
+        if (event.key === "Enter") {
+            askQuestion();
         }
 
-        // Successful response
-        answerBox.innerText =
-            data.answer ||
-            "No recommendation received.";
+    });
 
-    } catch (error) {
+});
 
-        console.error("FETCH ERROR:", error);
 
-        answerBox.innerText =
-            "Connection error: " + error.message;
-    }
+function setQuestion(text) {
+
+    const questionInput = document.getElementById("question");
+
+    questionInput.value = text;
+    questionInput.focus();
+
 }
+
 </script>
+
 
 </body>
 </html>
