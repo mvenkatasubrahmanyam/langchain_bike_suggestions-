@@ -150,7 +150,7 @@ def ask():
                     "content": question
                 }
             ]
-        )
+        })
 
         print("AGENT RESPONSE RECEIVED", flush=True)
 
@@ -165,7 +165,6 @@ def ask():
 
         if isinstance(answer, str):
             final_answer = answer
-
         elif isinstance(answer, list):
             final_answer = "\n".join(
                 str(item.get("text", item.get("content", "")))
@@ -173,7 +172,6 @@ def ask():
                 else str(item)
                 for item in answer
             )
-
         else:
             final_answer = str(answer)
 
@@ -183,11 +181,9 @@ def ask():
 
     except Exception as e:
         print("ERROR:", str(e), flush=True)
-
         return jsonify({
             "answer": "Error: " + str(e)
         }), 500
-
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
