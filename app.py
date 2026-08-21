@@ -141,14 +141,19 @@ def ask():
 
         result = agent.invoke({
             "messages": [
-                {"role": "user", "content": question}
+                {
+                    "role": "user",
+                    "content": question
+                }
             ]
         })
 
         messages = result.get("messages", [])
 
         if not messages:
-            return jsonify({"answer": "Agent returned no response."}), 500
+            return jsonify({
+                "answer": "Agent returned no response."
+            }), 500
 
         answer = messages[-1].content
 
@@ -162,41 +167,17 @@ def ask():
         else:
             final_answer = str(answer)
 
-        return jsonify({"answer": final_answer})
+        return jsonify({
+            "answer": final_answer
+        })
 
     except Exception as e:
         print("ERROR:", str(e))
-        return jsonify({"answer": "Error: " + str(e)}), 500
+        return jsonify({
+            "answer": "Error: " + str(e)
+        }), 500
 
-messages = result.get("messages", [])
 
-if not messages:
-    return jsonify({"answer": "Agent returned no response."}), 500
-
-answer = messages[-1].content
-
-if isinstance(answer, list):
-    final_answer = "\n".join(
-        item.get("text", str(item)) if isinstance(item, dict) else str(item)
-        for item in answer
-    )
-else:
-    final_answer = str(answer)
-
-return jsonify({"answer": final_answer})
-        if isinstance(answer, str):
-            final_answer = answer
-        elif isinstance(answer, list):
-            final_answer = "\n".join(
-                str(item.get("text", item.get("content", ""))) if isinstance(item, dict) else str(item)
-                for item in answer
-            )
-        else:
-            final_answer = str(answer)
-        return jsonify({"answer":final_answer})
-    except Exception as e:
-        print("ERROR:", str(e))
-        return jsonify({"answer":"Error: " + str(e)}), 500
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
