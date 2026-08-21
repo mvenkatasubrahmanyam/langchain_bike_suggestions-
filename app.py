@@ -63,7 +63,10 @@ def recommend_bike(category: str, max_budget_lakh: float, purpose: str):
 
 llm = ChatGoogleGenerativeAI(
     model="gemini-3.6-flash",
-    google_api_key=GEMINI_API_KEY
+    google_api_key=GEMINI_API_KEY,
+    thinking_level="low",
+    timeout=60,
+    max_retries=1
 )
 
 agent = create_agent(
