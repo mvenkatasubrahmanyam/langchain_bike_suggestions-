@@ -62,7 +62,7 @@ def recommend_bike(category: str, max_budget_lakh: float, purpose: str):
     return json.dumps(results, indent=2) if results else "No exact recommendation was found."
 
 llm = ChatGoogleGenerativeAI(
-    model="gemini-2.5-flash-lite",
+    model="gemini-3.5-flash-lite",
     google_api_key=GEMINI_API_KEY,
     temperature=0,
     timeout=30,
