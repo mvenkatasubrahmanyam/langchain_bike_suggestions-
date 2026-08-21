@@ -63,8 +63,7 @@ def recommend_bike(category: str, max_budget_lakh: float, purpose: str):
 
 llm = ChatGoogleGenerativeAI(
     model="gemini-3.6-flash",
-    google_api_key=GEMINI_API_KEY,
-    temperature=0
+    google_api_key=GEMINI_API_KEY
 )
 
 agent = create_agent(
@@ -97,8 +96,34 @@ def home():
     async function askQuestion() {
         const question=document.getElementById("question").value;
         document.getElementById("answer").innerText="Agent is thinking...";
-        const response=await fetch("/ask",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question})});
-        const data=await response.json();
+       async function askQuestion() {
+    const question = document.getElementById("question").value;
+    const answerBox = document.getElementById("answer");
+
+    answerBox.innerText = "Agent is thinking...";
+
+    try {
+        const response = await fetch("/ask", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ question: question })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            answerBox.innerText = data.answer || data.error || "Server error";
+            return;
+        }
+
+        answerBox.innerText = data.answer || "No answer returned.";
+
+    } catch (error) {
+        answerBox.innerText = "Connection error: " + error.message;
+    }
+}
         document.getElementById("answer").innerText=data.answer||data.error;
     }
     </script>
@@ -112,8 +137,28 @@ def ask():
         question = data.get("question", "").strip()
         if not question:
             return jsonify({"answer":"Please enter a question."})
-        result = agent.invoke({"messages":[{"role":"user","content":question}]})
-        answer = result["messages"][-1].content
+        result = agent.invoke({
+    "messages": [
+        {"role": "user", "content": question}
+    ]
+})
+
+messages = result.get("messages", [])
+
+if not messages:
+    return jsonify({"answer": "Agent returned no response."}), 500
+
+answer = messages[-1].content
+
+if isinstance(answer, list):
+    final_answer = "\n".join(
+        item.get("text", str(item)) if isinstance(item, dict) else str(item)
+        for item in answer
+    )
+else:
+    final_answer = str(answer)
+
+return jsonify({"answer": final_answer})
         if isinstance(answer, str):
             final_answer = answer
         elif isinstance(answer, list):
