@@ -62,11 +62,11 @@ def recommend_bike(category: str, max_budget_lakh: float, purpose: str):
     return json.dumps(results, indent=2) if results else "No exact recommendation was found."
 
 llm = ChatGoogleGenerativeAI(
-    model="gemini-3.6-flash",
+    model="gemini-2.5-flash-lite",
     google_api_key=GEMINI_API_KEY,
-    thinking_level="low",
-    timeout=60,
-    max_retries=1
+    temperature=0,
+    timeout=30,
+    max_retries=2
 )
 
 agent = create_agent(
@@ -97,9 +97,6 @@ def home():
     <h3>Answer:</h3><div id="answer" style="white-space:pre-wrap"></div>
     <script>
     async function askQuestion() {
-        const question=document.getElementById("question").value;
-        document.getElementById("answer").innerText="Agent is thinking...";
-       async function askQuestion() {
     const question = document.getElementById("question").value;
     const answerBox = document.getElementById("answer");
 
@@ -111,24 +108,24 @@ def home():
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ question: question })
+            body: JSON.stringify({
+                question: question
+            })
         });
 
         const data = await response.json();
 
         if (!response.ok) {
-            answerBox.innerText = data.answer || data.error || "Server error";
+            answerBox.innerText = data.answer || "Server error.";
             return;
         }
 
-        answerBox.innerText = data.answer || "No answer returned.";
+        answerBox.innerText = data.answer || "No answer received.";
 
     } catch (error) {
-        answerBox.innerText = "Connection error: " + error.message;
+        answerBox.innerText = "Error connecting to agent: " + error.message;
     }
 }
-        document.getElementById("answer").innerText=data.answer||data.error;
-    }
     </script>
     </body></html>
     """
@@ -140,7 +137,9 @@ def ask():
         question = data.get("question", "").strip()
 
         if not question:
-            return jsonify({"answer": "Please enter a question."})
+            return jsonify({
+                "answer": "Please enter a question."
+            })
 
         print("QUESTION:", question, flush=True)
 
@@ -151,7 +150,9 @@ def ask():
                     "content": question
                 }
             ]
-        })
+        )
+
+        print("AGENT RESPONSE RECEIVED", flush=True)
 
         messages = result.get("messages", [])
 
@@ -162,13 +163,17 @@ def ask():
 
         answer = messages[-1].content
 
-        if isinstance(answer, list):
+        if isinstance(answer, str):
+            final_answer = answer
+
+        elif isinstance(answer, list):
             final_answer = "\n".join(
-                item.get("text", str(item))
+                str(item.get("text", item.get("content", "")))
                 if isinstance(item, dict)
                 else str(item)
                 for item in answer
             )
+
         else:
             final_answer = str(answer)
 
@@ -177,11 +182,11 @@ def ask():
         })
 
     except Exception as e:
-        print("ERROR:", str(e))
+        print("ERROR:", str(e), flush=True)
+
         return jsonify({
             "answer": "Error: " + str(e)
         }), 500
-
 
 
 if __name__ == "__main__":
