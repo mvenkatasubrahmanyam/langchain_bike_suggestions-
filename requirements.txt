@@ -1,0 +1,4 @@
+Flask
+gunicorn
+langchain
+langchain-google-genai
