@@ -139,6 +139,8 @@ def ask():
         if not question:
             return jsonify({"answer": "Please enter a question."})
 
+        print("QUESTION:", question, flush=True)
+
         result = agent.invoke({
             "messages": [
                 {
